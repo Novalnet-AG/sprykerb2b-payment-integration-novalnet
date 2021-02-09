@@ -7,9 +7,9 @@ use Novalnet\Shared\NovalnetPayment\NovalnetConfig;
 use Novalnet\Shared\NovalnetPayment\NovalnetConstants;
 use Spryker\Zed\Oms\OmsConfig;
 
-$config[KernelConstants::CORE_NAMESPACES] = [
-    'Novalnet',
-];
+$config[KernelConstants::CORE_NAMESPACES] = array_merge($config[KernelConstants::CORE_NAMESPACES], [
+	'Novalnet',
+]);
 
 // ------------------------------ SECURITY ------------------------------------
 $config[KernelConstants::DOMAIN_WHITELIST] = array_merge($trustedHosts, [    
@@ -66,7 +66,7 @@ $config[NovalnetConstants::NOVALNET] = [
     NovalnetConstants::NOVALNET_CREDENTIALS_SIGNATURE => '', // The signature is provided by Novalnet AG after the opening of a merchant account.
     NovalnetConstants::NOVALNET_CREDENTIALS_TARIFF => '', // The tariff ID is a unique identification number for each project you have created. The merchant can create any number of tariffs in the Novalnet admin portal.
     NovalnetConstants::NOVALNET_CREDENTIALS_ACCESS_KEY => '', // This is the secure public key for encrypting and decrypting transaction parameters. This is mandatory value for all online transfers, Credit Card-3D secure and wallet systems.
-    NovalnetConstants::NOVALNET_SANDBOX_MODE => '0', // (0 or 1) 1 = The payment will be processed in the test mode therefore amount for this transaction will not be charged, 0 = The payment will be processed in the live mode.
+    NovalnetConstants::NOVALNET_SANDBOX_MODE => false, // (true/false) true = The payment will be processed in the test mode therefore amount for this transaction will not be charged, false = The payment will be processed in the live mode.
     // ------------------ Shop URL information ----------------------
     NovalnetConstants::NOVALNET_REDIRECT_SUCCESS_URL => sprintf(
         '%s/novalnet/payment',
@@ -82,7 +82,7 @@ $config[NovalnetConstants::NOVALNET] = [
     // ------------------ Credit Card payment ----------------------
     NovalnetConstants::NOVALNET_CREDIT_CARD_ONHOLD_AMOUNT_LIMIT => '', // (in minimum unit of currency. Example. enter 100 which is equal to 1.00) In case the order amount exceeds mentioned limit, the transaction will be set on hold till your confirmation of transaction.
     NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_CLIENT_KEY => '', // A public unique key needs linked to your account. It is needed to do the client-side authentication. You can find this credential by logging into your Novalnet Admin Portal
-    NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_INLINE => '1', // (0 or 1) 1 = Show Inline Credit card form form, 0 = Show Credit Card form in multi lines.
+    NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_INLINE => true, // (true/false) true = Show Inline Credit card form form, false = Show Credit Card form in multi lines.
     NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_STYLE_CONTAINER => '', // Customize styles of the Credit Card iframe.
     NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_STYLE_INPUT => '',  // Customize styles of the Credit Card iframe input element.
     NovalnetConstants::NOVALNET_CREDIT_CARD_FORM_STYLE_LABEL => '', // Customize styles of the Credit Card iframe label element.

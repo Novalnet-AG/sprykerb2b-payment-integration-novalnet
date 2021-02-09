@@ -30,10 +30,6 @@ class GatewayController extends AbstractGatewayController
 
         $this->getFactory()->getOmsFacade()->triggerEvent('redirect response', $orderItems, []);
 
-        if (in_array($redirectResponseTransfer->getPaymentMethod(), ['novalnetInvoice', 'novalnetPrepayment', 'novalnetBarzahlen', 'novalnetMultibanco'])) {
-            $this->getFactory()->getOmsFacade()->triggerEvent('waiting for payment', $orderItems, []);
-        }
-
         return $response;
     }
 

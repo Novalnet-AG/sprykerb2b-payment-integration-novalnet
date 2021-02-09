@@ -154,31 +154,33 @@ class PaymentManager implements PaymentManagerInterface
             ],
         ];
 
-        if (
-            $orderTransfer->getBillingAddress()->getFirstName() == $orderTransfer->getShippingAddress()->getFirstName()
-            && $orderTransfer->getBillingAddress()->getLastName() == $orderTransfer->getShippingAddress()->getLastName()
-            && $orderTransfer->getBillingAddress()->getAddress1() == $orderTransfer->getShippingAddress()->getAddress1()
-            && $orderTransfer->getBillingAddress()->getAddress2() == $orderTransfer->getShippingAddress()->getAddress2()
-            && $orderTransfer->getBillingAddress()->getCity() == $orderTransfer->getShippingAddress()->getCity()
-            && $orderTransfer->getBillingAddress()->getZipCode() == $orderTransfer->getShippingAddress()->getZipCode()
-            && $orderTransfer->getBillingAddress()->getIso2Code() == $orderTransfer->getShippingAddress()->getIso2Code()
-            && $orderTransfer->getBillingAddress()->getCompany() == $orderTransfer->getShippingAddress()->getCompany()
-            && $orderTransfer->getBillingAddress()->getPhone() == $orderTransfer->getShippingAddress()->getPhone()
-        ) {
-            $customerData['shipping'] = ['same_as_billing' => 1];
-        } else {
-            $customerData['shipping'] = [
-                'first_name' => $orderTransfer->getShippingAddress()->getFirstName(),
-                'last_name' => $orderTransfer->getShippingAddress()->getLastName(),
-                'email' => $orderTransfer->getCustomer()->getEmail(),
-                'street' => $orderTransfer->getShippingAddress()->getAddress1(),
-                'house_no' => $orderTransfer->getShippingAddress()->getAddress2(),
-                'city' => $orderTransfer->getShippingAddress()->getCity(),
-                'zip' => $orderTransfer->getShippingAddress()->getZipCode(),
-                'country_code' => $orderTransfer->getShippingAddress()->getIso2Code(),
-                'company' => $orderTransfer->getShippingAddress()->getCompany(),
-                'tel' => $orderTransfer->getShippingAddress()->getPhone(),
-            ];
+        if (!empty($orderTransfer->getShippingAddress())) {
+            if (
+                $orderTransfer->getBillingAddress()->getFirstName() == $orderTransfer->getShippingAddress()->getFirstName()
+                && $orderTransfer->getBillingAddress()->getLastName() == $orderTransfer->getShippingAddress()->getLastName()
+                && $orderTransfer->getBillingAddress()->getAddress1() == $orderTransfer->getShippingAddress()->getAddress1()
+                && $orderTransfer->getBillingAddress()->getAddress2() == $orderTransfer->getShippingAddress()->getAddress2()
+                && $orderTransfer->getBillingAddress()->getCity() == $orderTransfer->getShippingAddress()->getCity()
+                && $orderTransfer->getBillingAddress()->getZipCode() == $orderTransfer->getShippingAddress()->getZipCode()
+                && $orderTransfer->getBillingAddress()->getIso2Code() == $orderTransfer->getShippingAddress()->getIso2Code()
+                && $orderTransfer->getBillingAddress()->getCompany() == $orderTransfer->getShippingAddress()->getCompany()
+                && $orderTransfer->getBillingAddress()->getPhone() == $orderTransfer->getShippingAddress()->getPhone()
+            ) {
+                $customerData['shipping'] = ['same_as_billing' => 1];
+            } else {
+                $customerData['shipping'] = [
+                    'first_name' => $orderTransfer->getShippingAddress()->getFirstName(),
+                    'last_name' => $orderTransfer->getShippingAddress()->getLastName(),
+                    'email' => $orderTransfer->getCustomer()->getEmail(),
+                    'street' => $orderTransfer->getShippingAddress()->getAddress1(),
+                    'house_no' => $orderTransfer->getShippingAddress()->getAddress2(),
+                    'city' => $orderTransfer->getShippingAddress()->getCity(),
+                    'zip' => $orderTransfer->getShippingAddress()->getZipCode(),
+                    'country_code' => $orderTransfer->getShippingAddress()->getIso2Code(),
+                    'company' => $orderTransfer->getShippingAddress()->getCompany(),
+                    'tel' => $orderTransfer->getShippingAddress()->getPhone(),
+                ];
+            }
         }
 
         $requestData['customer'] = $customerData;
@@ -198,7 +200,7 @@ class PaymentManager implements PaymentManagerInterface
             'payment_type' => $paymentType,
             'amount' => $orderTransfer->getTotals()->getGrandTotal(),
             'currency' => $this->standardParameter->getCurrency(),
-            'test_mode' => $this->standardParameter->getTestMode(),
+            'test_mode' => ($this->standardParameter->getTestMode() === true ? 1 : 0),
             'order_no' => $orderTransfer->getOrderReference(),
             'system_ip' => $this->getIpAddress('SERVER_ADDR'),
         ];
@@ -456,12 +458,14 @@ class PaymentManager implements PaymentManagerInterface
      */
     protected function filterStandardParameter($requestData)
     {
+        $excludedParams = ['test_mode'];
+
         foreach ($requestData as $key => $value) {
             if (is_array($value)) {
                 $requestData[$key] = $this->filterStandardParameter($requestData[$key]);
             }
 
-            if (empty($requestData[$key])) {
+            if (!in_array($key, $excludedParams) && empty($requestData[$key])) {
                 unset($requestData[$key]);
             }
         }
@@ -688,7 +692,7 @@ class PaymentManager implements PaymentManagerInterface
      */
     protected function getAdditionalData(SpyPaymentNovalnetTransactionLog $transactionLog, $transactionData)
     {
-        $paymentMode = (int)($this->standardParameter->getTestMode() == 1 || $transactionData->transaction->test_mode == 1);
+        $paymentMode = (int)($this->standardParameter->getTestMode() === true || $transactionData->transaction->test_mode == 1);
         $comments = ['test_mode' => $paymentMode];
         $paymentComments = $this->getPaymentComments($transactionLog, $transactionData);
         $comments = array_merge($paymentComments, $comments);
@@ -771,8 +775,7 @@ class PaymentManager implements PaymentManagerInterface
         $status = false;
 
         if ($transactionLog) {
-            $status = ($transactionLog->getTransactionStatus() == 'PENDING'
-                && in_array($transactionLog->getPaymentMethod(), ['novalnetInvoice', 'novalnetPrepayment', 'novalnetBarzahlen', 'novalnetMultibanco'])) ? true : false;
+            $status = ($transactionLog->getTransactionStatus() == 'PENDING') ? true : false;
         }
 
         return $status;

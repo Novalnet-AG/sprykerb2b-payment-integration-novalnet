@@ -9,7 +9,7 @@
             <state name="new" />
             <state name="invalid" />
             <state name="online transfer pending" />            
-            <state name="authorized" />
+            <state name="waiting for payment" />
             <state name="canceled" />
             <state name="paid" />
             <state name="shipped" />
@@ -32,7 +32,7 @@
 
             <transition condition="NovalnetPayment/PaymentIsAuthorized" happy="true">
                 <source>online transfer pending</source>
-                <target>authorized</target>
+                <target>waiting for payment</target>
                 <event>redirect response</event>
             </transition>            
 
@@ -46,31 +46,19 @@
                 <source>online transfer pending</source>
                 <target>canceled</target>
                 <event>redirect response</event>
-            </transition>
-
-            <transition condition="NovalnetPayment/PaymentIsCaptured" happy="true">
-                <source>authorized</source>
-                <target>paid</target>
-                <event>capture</event>
             </transition>            
 
             <transition condition="NovalnetPayment/CallbackStatusUpdate" happy="true">
-                <source>authorized</source>
+                <source>waiting for payment</source>
                 <target>paid</target>
                 <event>callback paid</event>
             </transition>
 
             <transition condition="NovalnetPayment/PaymentIsCanceled">
-                <source>authorized</source>
+                <source>waiting for payment</source>
                 <target>canceled</target>
                 <event>callback canceled</event>
-            </transition>                        
-
-            <transition condition="NovalnetPayment/PaymentIsVoided">
-                <source>authorized</source>
-                <target>canceled</target>
-                <event>cancel</event>
-            </transition>
+            </transition>                                    
 
             <transition happy="true">
                 <source>paid</source>

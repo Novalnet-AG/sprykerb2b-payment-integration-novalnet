@@ -8,7 +8,8 @@
         <states>
             <state name="new" />
             <state name="invalid" />
-            <state name="online transfer pending" />            
+            <state name="online transfer pending" />
+            <state name="waiting for payment" />
             <state name="authorized" />
             <state name="canceled" />
             <state name="paid" />
@@ -34,7 +35,7 @@
                 <source>online transfer pending</source>
                 <target>authorized</target>
                 <event>redirect response</event>
-            </transition>            
+            </transition>
 
             <transition condition="NovalnetPayment/PaymentIsPaid" happy="true">
                 <source>online transfer pending</source>
@@ -48,11 +49,17 @@
                 <event>redirect response</event>
             </transition>
 
+            <transition condition="NovalnetPayment/WaitingForPayment" happy="true">
+                <source>online transfer pending</source>
+                <target>waiting for payment</target>
+                <event>redirect response</event>
+            </transition>
+
             <transition condition="NovalnetPayment/PaymentIsCaptured" happy="true">
                 <source>authorized</source>
                 <target>paid</target>
                 <event>capture</event>
-            </transition>            
+            </transition>
 
             <transition condition="NovalnetPayment/CallbackStatusUpdate" happy="true">
                 <source>authorized</source>
@@ -60,11 +67,23 @@
                 <event>callback paid</event>
             </transition>
 
+            <transition condition="NovalnetPayment/CallbackStatusUpdate" happy="true">
+                <source>waiting for payment</source>
+                <target>paid</target>
+                <event>callback paid</event>
+            </transition>
+
+            <transition condition="NovalnetPayment/PaymentIsCanceled">
+                <source>waiting for payment</source>
+                <target>canceled</target>
+                <event>callback canceled</event>
+            </transition>
+
             <transition condition="NovalnetPayment/PaymentIsCanceled">
                 <source>authorized</source>
                 <target>canceled</target>
                 <event>callback canceled</event>
-            </transition>                        
+            </transition>
 
             <transition condition="NovalnetPayment/PaymentIsVoided">
                 <source>authorized</source>
@@ -93,7 +112,7 @@
 
         <events>
             <event name="authorize" onEnter="true" command="NovalnetPayment/Authorize" />
-            <event name="redirect response" />            
+            <event name="redirect response" />
             <event name="on redirect timeout" timeout="1hour" />
             <event name="callback paid" />
             <event name="callback canceled" />
