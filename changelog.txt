@@ -1,0 +1,13 @@
+*** Changelog ***
+= 1.1.1 - 2021.05.31 =
+* Fix      - CallbackAction return type has been updated
+
+= 1.1.0 - 2021.05.15 =
+* Fix      - Optimized readme instructions in Installation guide
+* Enhanced - Adjusted payment methods state machines
+
+= 1.0.0  - 2021.01.19 =
+* Enhanced - Payment module updated with composer installation and adapted with new v2 API structure
+
+
+
