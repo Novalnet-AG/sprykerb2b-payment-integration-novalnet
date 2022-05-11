@@ -1,0 +1,19 @@
+*** Changelog ***
+
+= 1.2.1 - 2022.05.11 =
+* Fix      - Credit Card payment method state machine for handling 3D-Secure process
+
+= 1.2.0 - 2021.12.25 =
+* New      - Implemented Direct Debit SEPA with payment guarantee, Invoice with payment guarantee
+* Fix      - Compatible for sprykerb2b version 202108.0
+* Enhanced - Callback for transactions has been optimized as per the new testcase  
+
+= 1.1.1 - 2021.05.31 =
+* Fix      - CallbackAction return type has been updated
+
+= 1.1.0 - 2021.05.15 =
+* Fix      - Optimized readme instructions in Installation guide
+* Enhanced - Adjusted payment methods state machines
+
+= 1.0.0  - 2021.01.19 =
+* Enhanced - Payment module updated with composer installation and adapted with new v2 API structure
