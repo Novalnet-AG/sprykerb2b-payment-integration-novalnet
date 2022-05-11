@@ -204,7 +204,7 @@ class PaymentManager implements PaymentManagerInterface
             'order_no' => $orderTransfer->getOrderReference(),
             'system_ip' => $this->getIpAddress('SERVER_ADDR'),
             'system_name' => 'Spryker-B2B',
-            'system_version' => '202108.0-NN1.2.0',
+            'system_version' => '202108.0-NN1.2.1',
         ];
 
         $paymentData = $this->getPaymentData($orderTransfer, $paymentType);
