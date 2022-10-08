@@ -58,7 +58,7 @@ Configure the required settings under
 To get the complete installation guide, contact sales@novalnet.de
 
 ## License
-See our License Agreement at: https://www.novalnet.com/payment-plugins/free/license
+See our License Agreement at: https://www.novalnet.com/payment-plugins-free-license/
 
 ## Documentation & Support
 If you have any inquiries, please contact one of the following departments:
